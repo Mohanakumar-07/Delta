@@ -1,0 +1,305 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.logo-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.logo-header img {
+  width: max-content;
+  height: 80px;
+}
+
+.signup-container {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px 35px;
+  border-radius: 12px;
+  width: 380px;
+  box-shadow: 0 0 10px rgba(255,255,255,0);
+}
+
+.signup-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  margin-top: 0;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 6px;
+  color: white;
+}
+
+input::placeholder {
+  color: #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ccc;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.links {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ccc;
+}
+
+.flash-message {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.flash-message.error {
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 1px solid rgba(255, 0, 0, 0.5);
+  color: #ff6b6b;
+}
+
+.flash-message.success {
+  background-color: rgba(0, 255, 0, 0.2);
+  border: 1px solid rgba(0, 255, 0, 0.5);
+  color: #51cf66;
+}
+
+.password-hint {
+  background: rgba(255, 246, 179, 0.1);
+  border: 1px solid rgba(255, 246, 179, 0.3);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.password-hint p {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff6b3;
+}
+
+.password-hint ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.password-hint li {
+  margin: 4px 0;
+}
+
+/* Input wrapper for validation */
+.input-wrapper {
+  position: relative;
+  margin: 8px 0;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px;
+  padding-right: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: white;
+  transition: border-color 0.3s ease;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: rgba(255, 246, 179, 0.5);
+}
+
+.input-wrapper input.valid {
+  border-color: rgba(81, 207, 102, 0.5);
+}
+
+.input-wrapper input.invalid {
+  border-color: rgba(255, 107, 107, 0.5);
+}
+
+/* Validation icons */
+.validation-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.validation-icon.valid {
+  color: #51cf66;
+}
+
+.validation-icon.invalid {
+  color: #ff6b6b;
+}
+
+.validation-icon .loading {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  color: #fff6b3;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Validation messages */
+.validation-message {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+  padding-left: 2px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.validation-message.valid {
+  color: #51cf66;
+}
+
+.validation-message.invalid {
+  color: #ff6b6b;
+}
+
+/* Password wrapper with eye toggle */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 45px;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.eye-toggle:hover {
+  color: #fff;
+}
+
+/* Password requirements */
+.password-requirements {
+  background: rgba(255, 246, 179, 0.08);
+  border: 1px solid rgba(255, 246, 179, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.password-requirements p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff6b3;
+}
+
+.password-requirements ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 3px 0;
+  transition: color 0.3s ease;
+}
+
+.requirement .req-icon {
+  font-size: 10px;
+  width: 14px;
+  text-align: center;
+}
+
+.requirement.valid {
+  color: #51cf66;
+}
+
+.requirement.valid .req-icon {
+  color: #51cf66;
+}
+
+.requirement.invalid {
+  color: #ff6b6b;
+}
+
+.requirement.invalid .req-icon {
+  color: #ff6b6b;
+}

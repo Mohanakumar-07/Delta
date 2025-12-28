@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delta | Voice Assistant</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/img2.jpg') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/delta.css') }}" />
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="{{ url_for('landingpage') }}" class="nav-brand">
+      <img src="{{ url_for('static', filename='img/img7.png') }}" alt="Delta Logo" class="nav-logo" />
+      <div class="nav-brand-text">
+        <span class="nav-title">Delta</span>
+        <span class="nav-subtitle">Voice Assistant</span>
+      </div>
+    </a>
+    
+    <!-- Status Indicator -->
+    <div class="status-indicator" id="statusIndicator">
+      <span class="status-dot"></span>
+      <span class="status-text">Listening</span>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-container">
+      <button class="profile-btn" onclick="toggleDropdown()" aria-label="Profile menu">
+        <img src="{{ url_for('static', filename='img/img6.png') }}" alt="Profile" class="profile-img" />
+        <span class="profile-name">{{ session.get('name', 'User').split()[0] }}</span>
+        <svg class="profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <div class="dropdown-avatar">{{ session.get('name', 'User')[0].upper() }}</div>
+          <div class="dropdown-info">
+            <h3>{{ session.get('name', 'User') }}</h3>
+            <span class="dropdown-username">@{{ session.get('username', 'user') }}</span>
+          </div>
+        </div>
+        <div class="dropdown-body">
+          <div class="dropdown-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <span>{{ session.get('email', 'Not available') }}</span>
+          </div>
+        </div>
+        <div class="dropdown-footer">
+          <a href="{{ url_for('logout') }}" class="logout-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span>Sign Out</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Assistant Visual -->
+    <div class="assistant-container">
+      <div class="assistant-rings">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+      </div>
+      <div class="assistant-logo">
+        <img src="{{ url_for('static', filename='img/img1.png') }}" alt="Delta Assistant" />
+      </div>
+      <div class="assistant-pulse" id="assistantPulse"></div>
+    </div>
+
+    <!-- Voice Prompt -->
+    <div class="voice-prompt">
+      <p class="prompt-text">Say <span class="highlight">"Delta"</span> to start</p>
+      <p class="prompt-hint">Try: "Delta, play some music" or "Delta, what's the weather?"</p>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Conversation</span>
+      </div>
+      <div class="chat-box" id="chatBox"></div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/delta.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}" />
+</head>
+<body>
+  <div class="logo-header">
+    <img src="{{ url_for('static', filename='img/img 5.png') }}" alt="Delta Logo">
+  </div>
+
+  <div class="signup-container">
+    <h2>Create Account</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('signup') }}" method="POST" id="signupForm">
+      <div class="input-wrapper">
+        <input type="text" name="first_name" id="first_name" placeholder="First Name" autocomplete="given-name" required>
+      </div>
+      
+      <div class="input-wrapper">
+        <input type="text" name="last_name" id="last_name" placeholder="Last Name (Optional)" autocomplete="family-name">
+      </div>
+      
+      <div class="input-wrapper">
+        <input type="email" name="email" id="email" placeholder="Email Address" autocomplete="email" required>
+        <span class="validation-icon" id="emailIcon"></span>
+        <span class="validation-message" id="emailMessage"></span>
+      </div>
+      
+      <div class="input-wrapper">
+        <input type="text" name="username" id="username" placeholder="Username" autocomplete="username" minlength="3" required>
+        <span class="validation-icon" id="usernameIcon"></span>
+        <span class="validation-message" id="usernameMessage"></span>
+      </div>
+      
+      <div class="password-requirements" id="passwordRequirements">
+        <p>Password Requirements:</p>
+        <ul>
+          <li id="req-length" class="requirement">
+            <span class="req-icon">○</span> At least 6 characters
+          </li>
+          <li id="req-match" class="requirement">
+            <span class="req-icon">○</span> Passwords must match
+          </li>
+        </ul>
+      </div>
+      
+      <div class="input-wrapper password-wrapper">
+        <input type="password" name="password" id="password" placeholder="Create Password" autocomplete="new-password" minlength="6" required>
+        <svg class="eye-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" onclick="togglePassword('password', this)">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+      
+      <div class="input-wrapper password-wrapper">
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" autocomplete="new-password" required>
+        <svg class="eye-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" onclick="togglePassword('confirm_password', this)">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+      
+      <button type="submit" id="submitBtn">Sign Up</button>
+    </form>
+
+    <div class="register-link">
+      Already have an account? <a href="{{ url_for('login') }}">Login</a>
+    </div>
+  </div>
+
+  <div id="particles-js"></div>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="{{ url_for('static', filename='js/particles-config.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+  
+  <script>
+    let usernameValid = false;
+    let emailValid = false;
+    let passwordValid = false;
+    let debounceTimer;
+
+    // Helper function to get API URL
+    const getApiUrl = (endpoint) => window.API_CONFIG ? API_CONFIG.getUrl(endpoint) : endpoint;
+
+    // Toggle password visibility
+    function togglePassword(inputId, icon) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+      } else {
+        input.type = 'password';
+        icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      }
+    }
+
+    // Check username availability
+    document.getElementById('username').addEventListener('input', function() {
+      const username = this.value.trim();
+      const icon = document.getElementById('usernameIcon');
+      const message = document.getElementById('usernameMessage');
+      
+      clearTimeout(debounceTimer);
+      
+      if (username.length === 0) {
+        icon.innerHTML = '';
+        message.textContent = '';
+        usernameValid = false;
+        return;
+      }
+      
+      icon.innerHTML = '<span class="loading">⟳</span>';
+      message.textContent = 'Checking...';
+      message.className = 'validation-message';
+      
+      debounceTimer = setTimeout(() => {
+        fetch(getApiUrl('/api/check-username'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username: username })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.valid) {
+            icon.innerHTML = '✓';
+            icon.className = 'validation-icon valid';
+            message.textContent = data.message;
+            message.className = 'validation-message valid';
+            usernameValid = true;
+          } else {
+            icon.innerHTML = '✗';
+            icon.className = 'validation-icon invalid';
+            message.textContent = data.message;
+            message.className = 'validation-message invalid';
+            usernameValid = false;
+          }
+        })
+        .catch(() => {
+          icon.innerHTML = '';
+          message.textContent = '';
+          usernameValid = false;
+        });
+      }, 500);
+    });
+
+    // Check email availability
+    document.getElementById('email').addEventListener('input', function() {
+      const email = this.value.trim();
+      const icon = document.getElementById('emailIcon');
+      const message = document.getElementById('emailMessage');
+      
+      clearTimeout(debounceTimer);
+      
+      if (email.length === 0) {
+        icon.innerHTML = '';
+        message.textContent = '';
+        emailValid = false;
+        return;
+      }
+      
+      icon.innerHTML = '<span class="loading">⟳</span>';
+      message.textContent = 'Checking...';
+      message.className = 'validation-message';
+      
+      debounceTimer = setTimeout(() => {
+        fetch(getApiUrl('/api/check-email'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.valid) {
+            icon.innerHTML = '✓';
+            icon.className = 'validation-icon valid';
+            message.textContent = data.message;
+            message.className = 'validation-message valid';
+            emailValid = true;
+          } else {
+            icon.innerHTML = '✗';
+            icon.className = 'validation-icon invalid';
+            message.textContent = data.message;
+            message.className = 'validation-message invalid';
+            emailValid = false;
+          }
+        })
+        .catch(() => {
+          icon.innerHTML = '';
+          message.textContent = '';
+          emailValid = false;
+        });
+      }, 500);
+    });
+
+    // Password validation
+    function validatePasswords() {
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm_password').value;
+      const reqLength = document.getElementById('req-length');
+      const reqMatch = document.getElementById('req-match');
+      
+      // Check length
+      if (password.length >= 6) {
+        reqLength.classList.add('valid');
+        reqLength.querySelector('.req-icon').textContent = '✓';
+      } else {
+        reqLength.classList.remove('valid');
+        reqLength.querySelector('.req-icon').textContent = '○';
+      }
+      
+      // Check match
+      if (confirm.length > 0 && password === confirm) {
+        reqMatch.classList.add('valid');
+        reqMatch.querySelector('.req-icon').textContent = '✓';
+      } else if (confirm.length > 0) {
+        reqMatch.classList.remove('valid');
+        reqMatch.classList.add('invalid');
+        reqMatch.querySelector('.req-icon').textContent = '✗';
+      } else {
+        reqMatch.classList.remove('valid', 'invalid');
+        reqMatch.querySelector('.req-icon').textContent = '○';
+      }
+      
+      passwordValid = password.length >= 6 && password === confirm;
+    }
+
+    document.getElementById('password').addEventListener('input', validatePasswords);
+    document.getElementById('confirm_password').addEventListener('input', validatePasswords);
+
+    // Form submission validation
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm_password').value;
+      
+      if (password !== confirm) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+        return false;
+      }
+      
+      if (password.length < 6) {
+        e.preventDefault();
+        alert('Password must be at least 6 characters!');
+        return false;
+      }
+    });
+  </script>
+</body>
+</html>
