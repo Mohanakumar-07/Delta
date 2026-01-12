@@ -3,27 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Login Page</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
+  <link rel="stylesheet" href="css/login.css" />
 </head>
 <body>
   <div class="logo-header">
-    <img src="{{ url_for('static', filename='img/img 5.png') }}" alt="Delta Logo">
+    <img src="img/img 5.png" alt="Delta Logo">
   </div>
 
   <div class="login-box">
     <h2>Login</h2>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash-message {{ category }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form action="{{ url_for('login') }}" method="POST">
+    <form id="loginForm" method="POST" onsubmit="return handleLogin(event)">
       <div class="input-group">
         <input type="text" name="username" id="username" placeholder="Username or Email" autocomplete="username" required>
         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -42,21 +32,21 @@
   
       <div class="options">
         <label><input type="checkbox" name="remember"> Remember me</label>
-        <a href="{{ url_for('forgetpassword') }}" style="color: #aaa;">Forgot Password?</a>
+        <a href="forgetpass.html" style="color: #aaa;">Forgot Password?</a>
       </div>
 
       <button type="submit" class="login-btn">Login</button>
     </form>
 
     <div class="register-link">
-      Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a>
+      Don't have an account? <a href="signup.html">Sign Up</a>
     </div>
   </div>
 
   <div id="particles-js"></div>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="{{ url_for('static', filename='js/particles-config.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+  <script src="js/particles-config.js"></script>
+  <script src="js/config.js"></script>
   
   <script>
     function togglePassword(inputId, icon) {
@@ -68,6 +58,35 @@
         input.type = 'password';
         icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
       }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const remember = document.querySelector('input[name="remember"]').checked;
+      
+      try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password, remember })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          window.location.href = 'delta.html';
+        } else {
+          alert(data.message || 'Login failed');
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+      
+      return false;
     }
   </script>
 </body>

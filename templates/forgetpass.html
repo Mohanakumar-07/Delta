@@ -3,26 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Forgot Password</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/forgetpass.css') }}" />
+  <link rel="stylesheet" href="css/forgetpass.css" />
 </head>
 <body>
   <div class="forgot-box">
     <h2>Reset Password</h2>
     <p>Enter your email to receive a password reset link:</p>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash-message {{ category }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    <form action="{{ url_for('forgetpassword') }}" method="POST">
+    <form id="forgotForm" method="POST" onsubmit="return handleForgotPassword(event)">
       <input type="email" name="email" placeholder="Your email" required>
       <button type="submit">Send Reset Link</button>
     </form>
   </div>
+
+  <script src="js/config.js"></script>
+  <script>
+    async function handleForgotPassword(event) {
+      event.preventDefault();
+      
+      const email = document.querySelector('input[name="email"]').value;
+      
+      try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/api/auth/forgot-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          alert('Reset link sent! Check your email.');
+          window.location.href = 'login.html';
+        } else {
+          alert(data.message || 'Error sending reset link');
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+      
+      return false;
+    }
+  </script>
 </body>
 </html>

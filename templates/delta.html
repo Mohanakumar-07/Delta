@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Delta | Voice Assistant</title>
-  <link rel="icon" href="{{ url_for('static', filename='img/img2.jpg') }}" />
+  <link rel="icon" href="img/img2.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/delta.css') }}" />
+  <link rel="stylesheet" href="css/delta.css" />
 </head>
 <body>
   <!-- Background Effects -->
@@ -17,8 +17,8 @@
 
   <!-- Navigation Bar -->
   <nav class="navbar">
-    <a href="{{ url_for('landingpage') }}" class="nav-brand">
-      <img src="{{ url_for('static', filename='img/img7.png') }}" alt="Delta Logo" class="nav-logo" />
+    <a href="index.html" class="nav-brand">
+      <img src="img/img7.png" alt="Delta Logo" class="nav-logo" />
       <div class="nav-brand-text">
         <span class="nav-title">Delta</span>
         <span class="nav-subtitle">Voice Assistant</span>
@@ -34,18 +34,18 @@
     <!-- Profile Section -->
     <div class="profile-container">
       <button class="profile-btn" onclick="toggleDropdown()" aria-label="Profile menu">
-        <img src="{{ url_for('static', filename='img/img6.png') }}" alt="Profile" class="profile-img" />
-        <span class="profile-name">{{ session.get('name', 'User').split()[0] }}</span>
+        <img src="img/img6.png" alt="Profile" class="profile-img" />
+        <span class="profile-name" id="profileName">User</span>
         <svg class="profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </button>
       <div class="dropdown" id="profileDropdown">
         <div class="dropdown-header">
-          <div class="dropdown-avatar">{{ session.get('name', 'User')[0].upper() }}</div>
+          <div class="dropdown-avatar" id="dropdownAvatar">U</div>
           <div class="dropdown-info">
-            <h3>{{ session.get('name', 'User') }}</h3>
-            <span class="dropdown-username">@{{ session.get('username', 'user') }}</span>
+            <h3 id="dropdownName">User</h3>
+            <span class="dropdown-username" id="dropdownUsername">@user</span>
           </div>
         </div>
         <div class="dropdown-body">
@@ -54,11 +54,11 @@
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
               <polyline points="22,6 12,13 2,6"/>
             </svg>
-            <span>{{ session.get('email', 'Not available') }}</span>
+            <span id="dropdownEmail">user@example.com</span>
           </div>
         </div>
         <div class="dropdown-footer">
-          <a href="{{ url_for('logout') }}" class="logout-btn">
+          <a href="#" onclick="handleLogout()" class="logout-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
@@ -81,7 +81,7 @@
         <div class="ring ring-3"></div>
       </div>
       <div class="assistant-logo">
-        <img src="{{ url_for('static', filename='img/img1.png') }}" alt="Delta Assistant" />
+        <img src="img/img1.png" alt="Delta Assistant" />
       </div>
       <div class="assistant-pulse" id="assistantPulse"></div>
     </div>
@@ -105,7 +105,48 @@
   </main>
 
   <!-- Scripts -->
-  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/delta.js') }}"></script>
+  <script src="js/config.js"></script>
+  <script src="js/delta.js"></script>
+  
+  <script>
+    // Check authentication on page load
+    async function checkAuth() {
+      try {
+        const response = await fetch(API_CONFIG.getUrl(API_CONFIG.ENDPOINTS.CHECK_AUTH), {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        // Update profile with user data
+        if (data.user) {
+          const profileName = document.getElementById('profileName');
+          const dropdownName = document.getElementById('dropdownName');
+          const dropdownUsername = document.getElementById('dropdownUsername');
+          const dropdownAvatar = document.getElementById('dropdownAvatar');
+          
+          if (profileName) profileName.textContent = data.user.name || data.user.username;
+          if (dropdownName) dropdownName.textContent = data.user.name || data.user.username;
+          if (dropdownUsername) dropdownUsername.textContent = '@' + data.user.username;
+          
+          // Update avatar initial
+          if (dropdownAvatar) {
+            const initial = (data.user.name || data.user.username).charAt(0).toUpperCase();
+            dropdownAvatar.textContent = initial;
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = 'login.html';
+      }
+    }
+    
+    // Run auth check on page load
+    checkAuth();
+  </script>
 </body>
 </html>
