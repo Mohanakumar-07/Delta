@@ -285,6 +285,8 @@ body {
   text-decoration: none;
   border-radius: 10px;
   transition: all var(--transition-normal);
+  cursor: pointer;
+  border: none;
 }
 
 .logout-btn:hover {

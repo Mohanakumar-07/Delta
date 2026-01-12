@@ -1,9 +1,9 @@
 
 const API_CONFIG = {
   // Base URL for all API calls - UPDATE THIS FOR PRODUCTION
-  // For local dev: '' (empty)
-  // For separate hosting: 'https://your-backend.onrender.com'
-  BASE_URL: 'https://YOUR-BACKEND-URL.onrender.com',
+  // For local dev: 'http://localhost:5000'
+  // For separate hosting: 'https://delta.gowshik.online'
+  BASE_URL: 'https://delta.gowshik.online',
   
 
   

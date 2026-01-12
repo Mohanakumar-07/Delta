@@ -220,7 +220,7 @@ if (window.SpeechRecognition) {
     .then(res => {
       if (res.status === 401) {
         // Session expired, redirect to login
-        window.location.href = '/login';
+        window.location.href = '/login.html';
         throw new Error('Session expired');
       }
       return res.json();
