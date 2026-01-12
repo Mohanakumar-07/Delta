@@ -92,12 +92,22 @@ def add_security_headers(response):
 
 @app.route('/')
 def landingpage():
-    return render_template('landingpage.html')
+    return jsonify({
+        'name': 'Delta Voice Assistant API',
+        'version': '1.0',
+        'status': 'running',
+        'endpoints': {
+            'auth': '/api/auth/*',
+            'chat': '/update',
+            'docs': 'https://github.com/yourusername/delta'
+        }
+    })
 
 @app.route('/main')
 @login_required
 def home():
-    return render_template('delta.html')
+    # Legacy route - frontend handles this now
+    return jsonify({'message': 'Please use the frontend application'})
 
 
 @app.route("/login", methods=['GET','POST'])
@@ -266,12 +276,31 @@ def forgetpassword():
     
     return render_template('forgetpass.html')
 
+# API Forgot Password endpoint
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def api_forgot_password():
+    data = request.get_json()
+    email = data.get('email', '').strip()
+    
+    if not email:
+        return jsonify({'success': False, 'error': 'Email is required'}), 400
+    
+    # Always return success to prevent email enumeration attacks
+    user = get_user_by_email(email)
+    if user:
+        # TODO: Implement actual password reset email functionality
+        pass
+    
+    return jsonify({
+        'success': True, 
+        'message': 'If your email is registered, you will receive a password reset link'
+    })
+
 @app.route('/logout')
 @login_required
 def logout():
     session.clear()
-    flash('You have been logged out', 'success')
-    return redirect(url_for('landingpage'))
+    return jsonify({'success': True, 'message': 'Logged out successfully'})
 
 
 # API Logout endpoint
